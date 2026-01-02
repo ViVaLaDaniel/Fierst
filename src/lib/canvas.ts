@@ -313,32 +313,30 @@ export async function copyToClipboard(source: string | Blob): Promise<void> {
  */
 export async function downloadImage(source: string | Blob, filename: string): Promise<void> {
   const isBlob = source instanceof Blob
-  
-  // Convert Blob to DataURL to ensure it persists if the popup closes
   const dataUrl = isBlob ? await blobToDataUrl(source as Blob) : (source as string)
   
-  // Ensure we have a clean filename
+  // Clean filename for Chrome
   const cleanFilename = filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase()
 
-  // Use Chrome Downloads API
-  if (typeof chrome !== "undefined" && chrome.downloads && typeof chrome.downloads.download === "function") {
-    return new Promise((resolve) => {
-      chrome.downloads.download({
-        url: dataUrl,
-        filename: cleanFilename,
-        saveAs: false, // Set to false for better UX, Chrome should respect the filename now
-        conflictAction: "uniquify"
-      }, (downloadId) => {
-        if (chrome.runtime.lastError) {
-          console.error("Download API Error:", chrome.runtime.lastError.message)
-          triggerLegacyDownload(dataUrl, cleanFilename)
+  // Try to send to background script for more reliable download
+  if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: "DOWNLOAD_IMAGE",
+        payload: {
+          url: dataUrl,
+          filename: cleanFilename
         }
-        resolve()
       })
-    })
-  } else {
-    triggerLegacyDownload(dataUrl, cleanFilename)
+      
+      if (response?.success) return
+    } catch (e) {
+      console.error("Failed to send download message to background:", e)
+    }
   }
+
+  // Fallback if background script is not available
+  triggerLegacyDownload(dataUrl, cleanFilename)
 }
 
 /**
