@@ -320,25 +320,28 @@ export async function downloadImage(source: string | Blob, filename: string): Pr
   // Ensure we have a clean filename
   const cleanFilename = filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase()
 
-  // Use Chrome Downloads API
-  if (typeof chrome !== "undefined" && chrome.downloads && typeof chrome.downloads.download === "function") {
-    return new Promise((resolve) => {
-      chrome.downloads.download({
+  // Use Background Service Worker for downloads if available
+  // This prevents filename loss when popup closes
+  if (typeof chrome !== "undefined" && chrome.runtime && typeof chrome.runtime.sendMessage === "function") {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: "DOWNLOAD_IMAGE",
         url: dataUrl,
-        filename: cleanFilename,
-        saveAs: false, // Set to false for better UX, Chrome should respect the filename now
-        conflictAction: "uniquify"
-      }, (downloadId) => {
-        if (chrome.runtime.lastError) {
-          console.error("Download API Error:", chrome.runtime.lastError.message)
-          triggerLegacyDownload(dataUrl, cleanFilename)
-        }
-        resolve()
+        filename: cleanFilename
       })
-    })
-  } else {
-    triggerLegacyDownload(dataUrl, cleanFilename)
+
+      if (response && response.success) {
+        return
+      } else {
+        console.warn("Background download failed, falling back to legacy method", response?.error)
+      }
+    } catch (e) {
+      console.warn("Failed to contact background script", e)
+    }
   }
+
+  // Fallback to legacy download
+  triggerLegacyDownload(dataUrl, cleanFilename)
 }
 
 /**
