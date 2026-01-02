@@ -1,0 +1,40 @@
+{
+  "name": "screenshot-beautifier",
+  "displayName": "Screenshot Beautifier",
+  "version": "1.0.0",
+  "description": "Transform screenshots into beautiful shareable images with gradients, shadows, and device mockups",
+  "author": "Screenshot Beautifier",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package"
+  },
+  "dependencies": {
+    "@plasmohq/storage": "^1.15.0",
+    "autoprefixer": "^10.4.23",
+    "firebase": "^12.7.0",
+    "plasmo": "^0.90.5",
+    "postcss": "^8.5.6",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.32",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  },
+  "manifest": {
+    "permissions": [
+      "clipboardRead",
+      "clipboardWrite",
+      "activeTab",
+      "downloads",
+      "tabs"
+    ],
+    "host_permissions": [
+      "<all_urls>"
+    ]
+  }
+}
