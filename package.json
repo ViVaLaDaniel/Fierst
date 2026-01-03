@@ -1,7 +1,7 @@
 {
   "name": "screenshot-beautifier",
   "displayName": "Screenshot Beautifier",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Transform screenshots into beautiful shareable images with gradients, shadows, and device mockups",
   "author": "Screenshot Beautifier",
   "scripts": {
@@ -38,6 +38,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.4.0",
     "prettier": "^3.7.4",
+    "svgo": "^3.3.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.51.0",
     "vitest": "^4.0.16"

@@ -11,6 +11,8 @@ export interface MockupType {
 export const mockups: MockupType[] = [
   { id: "none", name: "None", isPro: false, aspectHint: "any" },
   { id: "browser", name: "Browser", isPro: true, aspectHint: "landscape" },
+  { id: "macos-sequoia", name: "macOS Sequoia", isPro: true, aspectHint: "landscape" },
+  { id: "win11", name: "Windows 11", isPro: true, aspectHint: "landscape" },
   { id: "macbook", name: "MacBook", isPro: true, aspectHint: "landscape" },
   { id: "iphone", name: "iPhone", isPro: true, aspectHint: "portrait" },
   { id: "android", name: "Android", isPro: true, aspectHint: "portrait" }
@@ -212,4 +214,72 @@ export function drawAndroidFrame(
     totalWidth,
     totalHeight
   }
+}
+// Draw macOS Sequoia frame
+export function drawMacOSSequoiaFrame(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  borderRadius: number
+): void {
+  const headerHeight = 38
+  const buttonRadius = 6
+  const buttonY = y + headerHeight / 2
+
+  // Window body with glass effect
+  ctx.fillStyle = "rgba(40, 40, 40, 0.9)"
+  ctx.beginPath()
+  ctx.roundRect(x, y, width, height + headerHeight, borderRadius)
+  ctx.fill()
+  
+  // Subtle border glow
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.15)"
+  ctx.lineWidth = 1
+  ctx.stroke()
+
+  // Traffic lights
+  const colors = ["#ff5f57", "#febc2e", "#28c840"]
+  colors.forEach((color, i) => {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.arc(x + 20 + i * 20, buttonY, buttonRadius, 0, Math.PI * 2)
+    ctx.fill()
+  })
+}
+
+// Draw Windows 11 frame
+export function drawWindows11Frame(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  borderRadius: number
+): void {
+  const headerHeight = 40
+  
+  // Mica-like background
+  ctx.fillStyle = "#202020"
+  ctx.beginPath()
+  ctx.roundRect(x, y, width, height + headerHeight, borderRadius)
+  ctx.fill()
+
+  // Centered URL/Title bar
+  ctx.fillStyle = "#2c2c2c"
+  const barW = Math.min(width * 0.6, 400)
+  ctx.beginPath()
+  ctx.roundRect(x + (width - barW) / 2, y + 8, barW, 24, 6)
+  ctx.fill()
+
+  // Caption buttons (Minimize, Maximize, Close)
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.6)"
+  ctx.lineWidth = 1
+  // Close [X]
+  ctx.beginPath()
+  const cx = x + width - 24; const cy = y + 14
+  ctx.moveTo(cx, cy); ctx.lineTo(cx + 10, cy + 10)
+  ctx.moveTo(cx + 10, cy); ctx.lineTo(cx, cy + 10)
+  ctx.stroke()
 }

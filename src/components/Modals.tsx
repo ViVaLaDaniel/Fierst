@@ -1,5 +1,6 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { activateLicense } from "../lib/license"
 
 interface UpgradeModalProps {
   show: boolean
@@ -162,5 +163,61 @@ export const LicenseModal: FC<LicenseModalProps> = ({
         </div>
       )}
     </AnimatePresence>
+  )
+}
+interface ModalsProps {
+  showUpgradeModal: boolean
+  setShowUpgradeModal: (s: boolean) => void
+  showLicenseModal: boolean
+  setShowLicenseModal: (s: boolean) => void
+  setIsPro: (p: boolean) => void
+}
+
+export const Modals: FC<ModalsProps> = ({
+  showUpgradeModal,
+  setShowUpgradeModal,
+  showLicenseModal,
+  setShowLicenseModal,
+  setIsPro
+}) => {
+  const [licenseKey, setLicenseKey] = useState("")
+  const [licenseError, setLicenseError] = useState("")
+  const [isActivating, setIsActivating] = useState(false)
+
+  const handleActivateLicense = async () => {
+    setLicenseError("")
+    setIsActivating(true)
+    const result = await activateLicense(licenseKey)
+    if (result.success) {
+      setIsPro(true)
+      setShowLicenseModal(false)
+      setLicenseKey("")
+    } else {
+      setLicenseError(result.error || "Activation failed")
+    }
+    setIsActivating(false)
+  }
+
+  return (
+    <>
+      <UpgradeModal
+        show={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        onActivate={() => {
+          setShowUpgradeModal(false)
+          setShowLicenseModal(true)
+        }}
+      />
+
+      <LicenseModal
+        show={showLicenseModal}
+        onClose={() => setShowLicenseModal(false)}
+        licenseKey={licenseKey}
+        setLicenseKey={setLicenseKey}
+        onActivate={handleActivateLicense}
+        isActivating={isActivating}
+        error={licenseError}
+      />
+    </>
   )
 }
