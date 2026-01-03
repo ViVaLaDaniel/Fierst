@@ -1,5 +1,5 @@
 import { db } from "./firebase"
-import { doc, getDoc, setDoc } from "firebase/firestore"
+import { doc, getDoc } from "firebase/firestore"
 
 export interface LicenseInfo {
   licenseKey: string // In Stripe context, this could be the Purchase ID or Email
@@ -54,9 +54,10 @@ export async function validateLicense(email: string): Promise<{
       }
     }
 
-    return { 
-      valid: false, 
-      error: "No active Pro license found for this email. Make sure you used the same email during checkout." 
+    return {
+      valid: false,
+      error:
+        "No active Pro license found for this email. Make sure you used the same email during checkout."
     }
   } catch (error) {
     console.error("License validation failed:", error)

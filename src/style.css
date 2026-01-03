@@ -18,19 +18,39 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.gradient-1 { background: var(--gradient-1); }
-.gradient-2 { background: var(--gradient-2); }
-.gradient-3 { background: var(--gradient-3); }
-.gradient-4 { background: var(--gradient-4); }
-.gradient-5 { background: var(--gradient-5); }
-.gradient-6 { background: var(--gradient-6); }
-.gradient-7 { background: var(--gradient-7); }
-.gradient-8 { background: var(--gradient-8); }
-.gradient-9 { background: var(--gradient-9); }
-.gradient-10 { background: var(--gradient-10); }
+.gradient-1 {
+  background: var(--gradient-1);
+}
+.gradient-2 {
+  background: var(--gradient-2);
+}
+.gradient-3 {
+  background: var(--gradient-3);
+}
+.gradient-4 {
+  background: var(--gradient-4);
+}
+.gradient-5 {
+  background: var(--gradient-5);
+}
+.gradient-6 {
+  background: var(--gradient-6);
+}
+.gradient-7 {
+  background: var(--gradient-7);
+}
+.gradient-8 {
+  background: var(--gradient-8);
+}
+.gradient-9 {
+  background: var(--gradient-9);
+}
+.gradient-10 {
+  background: var(--gradient-10);
+}
 
 .shadow-soft {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -42,4 +62,37 @@ body {
 
 .shadow-hard {
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.5);
+}
+
+@keyframes shimmer-slow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer-slow 2s infinite ease-in-out;
+}
+
+.glass-morphism {
+  background: rgba(31, 41, 55, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

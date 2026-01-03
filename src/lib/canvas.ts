@@ -1,9 +1,4 @@
-import { 
-  drawBrowserFrame, 
-  drawMacBookFrame, 
-  drawIPhoneFrame, 
-  drawAndroidFrame 
-} from "./mockups"
+import { drawBrowserFrame, drawMacBookFrame, drawIPhoneFrame, drawAndroidFrame } from "./mockups"
 
 export interface CanvasSettings {
   padding: number
@@ -34,19 +29,19 @@ function drawWatermark(
 ): void {
   const text = "Made with Screenshot Beautifier"
   const fontSize = Math.max(12, Math.min(16, canvasWidth / 40))
-  
+
   ctx.save()
   ctx.font = `${fontSize}px system-ui, -apple-system, sans-serif`
   ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
   ctx.textAlign = "right"
   ctx.textBaseline = "bottom"
-  
+
   // Add subtle shadow for visibility on any background
   ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
   ctx.shadowBlur = 4
   ctx.shadowOffsetX = 1
   ctx.shadowOffsetY = 1
-  
+
   ctx.fillText(text, canvasWidth - 12, canvasHeight - 10)
   ctx.restore()
 }
@@ -58,12 +53,12 @@ export async function beautifyImage(
   imageDataUrl: string,
   settings: CanvasSettings,
   returnType: "blob"
-): Promise<Blob>;
+): Promise<Blob>
 export async function beautifyImage(
   imageDataUrl: string,
   settings: CanvasSettings,
   returnType?: "dataUrl"
-): Promise<string>;
+): Promise<string>
 export async function beautifyImage(
   imageDataUrl: string,
   settings: CanvasSettings,
@@ -72,26 +67,26 @@ export async function beautifyImage(
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.crossOrigin = "anonymous"
-    
+
     img.onload = () => {
       const canvas = document.createElement("canvas")
       const ctx = canvas.getContext("2d")
-      
+
       if (!ctx) {
         reject(new Error("Could not get canvas context"))
         return
       }
-      
+
       // Calculate canvas size with padding
       let imageX = settings.padding
       let imageY = settings.padding
       let totalWidth = img.width + settings.padding * 2
       let totalHeight = img.height + settings.padding * 2
-      
+
       // Apply mockup frame if selected
       if (settings.mockupType && settings.mockupType !== "none") {
         const mockupPadding = 40
-        
+
         switch (settings.mockupType) {
           case "browser":
             totalHeight += 32
@@ -111,16 +106,16 @@ export async function beautifyImage(
             imageY += 12
             break
         }
-        
+
         totalWidth += mockupPadding * 2
         totalHeight += mockupPadding * 2
         imageX += mockupPadding
         imageY += mockupPadding
       }
-      
+
       canvas.width = totalWidth
       canvas.height = totalHeight
-      
+
       // Draw background
       if (settings.background.startsWith("linear-gradient")) {
         drawGradientBackground(ctx, totalWidth, totalHeight, settings.background)
@@ -128,15 +123,29 @@ export async function beautifyImage(
         ctx.fillStyle = settings.background
         ctx.fillRect(0, 0, totalWidth, totalHeight)
       }
-      
+
       // Draw device mockup frame if selected
       if (settings.mockupType && settings.mockupType !== "none") {
         switch (settings.mockupType) {
           case "browser":
-            drawBrowserFrame(ctx, imageX - 0, imageY - 32, img.width, img.height, settings.borderRadius)
+            drawBrowserFrame(
+              ctx,
+              imageX - 0,
+              imageY - 32,
+              img.width,
+              img.height,
+              settings.borderRadius
+            )
             break
           case "macbook":
-            drawMacBookFrame(ctx, imageX - 12, imageY - 24, img.width, img.height, settings.borderRadius)
+            drawMacBookFrame(
+              ctx,
+              imageX - 12,
+              imageY - 24,
+              img.width,
+              img.height,
+              settings.borderRadius
+            )
             break
           case "iphone":
             drawIPhoneFrame(ctx, imageX - 12, imageY - 12, img.width, img.height)
@@ -146,7 +155,7 @@ export async function beautifyImage(
             break
         }
       }
-      
+
       // Draw shadow if needed (not for device mockups)
       if (settings.shadow !== "none" && (!settings.mockupType || settings.mockupType === "none")) {
         ctx.save()
@@ -159,39 +168,43 @@ export async function beautifyImage(
           ctx.shadowOffsetY = 20
           ctx.shadowBlur = 40
         }
-        
+
         ctx.fillStyle = "#fff"
         roundRect(ctx, imageX, imageY, img.width, img.height, settings.borderRadius)
         ctx.fill()
         ctx.restore()
       }
-      
+
       // Draw image with rounded corners
       ctx.save()
       roundRect(ctx, imageX, imageY, img.width, img.height, settings.borderRadius)
       ctx.clip()
       ctx.drawImage(img, imageX, imageY)
       ctx.restore()
-      
+
       // Draw watermark for free users
       if (settings.showWatermark) {
         drawWatermark(ctx, totalWidth, totalHeight)
       }
-      
+
       const format = settings.format || "png"
       const quality = settings.quality || 0.92
       const mimeType = format === "jpg" ? "image/jpeg" : `image/${format}`
 
       if (returnType === "blob") {
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob)
-          else reject(new Error("Blob creation failed"))
-        }, mimeType, quality)
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob)
+            else reject(new Error("Blob creation failed"))
+          },
+          mimeType,
+          quality
+        )
       } else {
         resolve(canvas.toDataURL(mimeType, quality))
       }
     }
-    
+
     img.onerror = () => reject(new Error("Failed to load image"))
     img.src = imageDataUrl
   })
@@ -217,15 +230,19 @@ export async function exportImage(
         return
       }
       ctx.drawImage(img, 0, 0)
-      
+
       const mimeType = format === "jpg" ? "image/jpeg" : `image/${format}`
-      canvas.toBlob((blob) => {
-        if (blob) {
-          resolve(blob)
-        } else {
-          reject(new Error("Failed to create blob"))
-        }
-      }, mimeType, quality)
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob)
+          } else {
+            reject(new Error("Failed to create blob"))
+          }
+        },
+        mimeType,
+        quality
+      )
     }
     img.onerror = () => reject(new Error("Failed to load image"))
     img.src = dataUrl
@@ -244,27 +261,27 @@ function drawGradientBackground(
   // Parse gradient CSS
   const colorMatch = gradientCss.match(/#[a-fA-F0-9]{6}/g)
   const angleMatch = gradientCss.match(/(\d+)deg/)
-  
+
   if (!colorMatch || colorMatch.length < 2) {
     ctx.fillStyle = "#667eea"
     ctx.fillRect(0, 0, width, height)
     return
   }
-  
+
   const angle = angleMatch ? parseInt(angleMatch[1]) : 135
-  const radians = (angle - 90) * Math.PI / 180
-  
-  const x1 = width / 2 - Math.cos(radians) * width / 2
-  const y1 = height / 2 - Math.sin(radians) * height / 2
-  const x2 = width / 2 + Math.cos(radians) * width / 2
-  const y2 = height / 2 + Math.sin(radians) * height / 2
-  
+  const radians = ((angle - 90) * Math.PI) / 180
+
+  const x1 = width / 2 - (Math.cos(radians) * width) / 2
+  const y1 = height / 2 - (Math.sin(radians) * height) / 2
+  const x2 = width / 2 + (Math.cos(radians) * width) / 2
+  const y2 = height / 2 + (Math.sin(radians) * height) / 2
+
   const gradient = ctx.createLinearGradient(x1, y1, x2, y2)
-  
+
   colorMatch.forEach((color, index) => {
     gradient.addColorStop(index / (colorMatch.length - 1), color)
   })
-  
+
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, width, height)
 }
@@ -297,10 +314,8 @@ function roundRect(
  * Copy image to clipboard
  */
 export async function copyToClipboard(source: string | Blob): Promise<void> {
-  const blob = source instanceof Blob 
-    ? source 
-    : await (await fetch(source)).blob()
-  
+  const blob = source instanceof Blob ? source : await (await fetch(source)).blob()
+
   await navigator.clipboard.write([
     new ClipboardItem({
       [blob.type]: blob
@@ -314,9 +329,9 @@ export async function copyToClipboard(source: string | Blob): Promise<void> {
 export async function downloadImage(source: string | Blob, filename: string): Promise<void> {
   const isBlob = source instanceof Blob
   const dataUrl = isBlob ? await blobToDataUrl(source as Blob) : (source as string)
-  
+
   // Clean filename for Chrome
-  const cleanFilename = filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase()
+  const cleanFilename = filename.replace(/[^a-z0-9.]/gi, "_").toLowerCase()
 
   // Try to send to background script for more reliable download
   if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
@@ -328,7 +343,7 @@ export async function downloadImage(source: string | Blob, filename: string): Pr
           filename: cleanFilename
         }
       })
-      
+
       if (response?.success) return
     } catch (e) {
       console.error("Failed to send download message to background:", e)
@@ -358,7 +373,7 @@ function triggerLegacyDownload(url: string, filename: string) {
 export async function readFromClipboard(): Promise<string | null> {
   try {
     const clipboardItems = await navigator.clipboard.read()
-    
+
     for (const item of clipboardItems) {
       for (const type of item.types) {
         if (type.startsWith("image/")) {
@@ -367,7 +382,7 @@ export async function readFromClipboard(): Promise<string | null> {
         }
       }
     }
-    
+
     return null
   } catch (error) {
     console.error("Failed to read clipboard:", error)

@@ -62,7 +62,7 @@ export function drawBrowserFrame(
     { color: "#28c840", x: x + 16 + (buttonRadius * 2 + buttonSpacing) * 2 }
   ]
 
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     ctx.fillStyle = btn.color
     ctx.beginPath()
     ctx.arc(btn.x + buttonRadius, buttonY, buttonRadius, 0, Math.PI * 2)
@@ -99,7 +99,12 @@ export function drawMacBookFrame(
   // Screen bezel
   ctx.fillStyle = "#1a1a1a"
   ctx.beginPath()
-  ctx.roundRect(x, y, totalWidth, height + bezelTop + bezelBottom, [borderRadius + 4, borderRadius + 4, 0, 0])
+  ctx.roundRect(x, y, totalWidth, height + bezelTop + bezelBottom, [
+    borderRadius + 4,
+    borderRadius + 4,
+    0,
+    0
+  ])
   ctx.fill()
 
   // Camera notch
